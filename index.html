@@ -1,1 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gaming Dashboard</title>
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #121220;
+      height: 100vh;
+      padding: 20px;
+    }
+
+    .sidebar h1 {
+      font-size: 1.6em;
+      margin-bottom: 30px;
+      color: #00ffc6;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      padding: 12px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: 0.2s;
+    }
+
+    .sidebar li:hover {
+      background-color: #2a2a3f;
+    }
+
+    .main {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .player, .leaderboard-entry {
+      background-color: #2b2b3d;
+      padding: 10px 15px;
+      margin: 8px 0;
+      border-radius: 4px;
+    }
+
+    canvas {
+      background-color: #fff;
+      border-radius: 8px;
+      max-width: 600px;
+    }
+
+    h2 {
+      color: #00ffc6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h1>🎮 GameDash</h1>
+    <ul>
+      <li onclick="showSection('dashboard')">📊 Dashboard</li>
+      <li onclick="showSection('players')">🧍 Players</li>
+      <li onclick="showSection('leaderboard')">🏆 Leaderboard</li>
+      <li onclick="showSection('analytics')">📈 Analytics</li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <!-- Dashboard Overview -->
+    <div id="dashboard" class="section active">
+      <h2>Dashboard Overview</h2>
+      <p>Welcome to the GameDash admin panel. Use the menu to view players, leaderboards, and real-time analytics.</p>
+    </div>
+
+    <!-- Players Section -->
+    <div id="players" class="section">
+      <h2>Players</h2>
+      <div id="player-list"></div>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div id="leaderboard" class="section">
+      <h2>Leaderboard</h2>
+      <div id="leaderboard-list"></div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div id="analytics" class="section">
+      <h2>Game Analytics</h2>
+      <canvas id="chart" width="600" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Navigation
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // Mock Data
+    const players = [
+      { name: 'ShadowSlayer', score: 1450 },
+      { name: 'PixelStorm', score: 1310 },
+      { name: 'NovaKnight', score: 1200 },
+      { name: 'BladeRunner', score: 980 },
+    ];
+
+    // Render Players
+    function renderPlayers() {
+      const container = document.getElementById('player-list');
+      container.innerHTML = players.map(p => `
+        <div class="player">
+          <strong>${p.name}</strong> – ${p.score} pts
+        </div>
+      `).join('');
+    }
+
+    // Render Leaderboard
+    function renderLeaderboard() {
+      const sorted = [...players].sort((a, b) => b.score - a.score);
+      const container = document.getElementById('leaderboard-list');
+      container.innerHTML = sorted.map((p, i) => `
+        <div class="leaderboard-entry">
+          #${i + 1} ${p.name} - ${p.score} pts
+        </div>
+      `).join('');
+    }
+
+    // Render Chart
+    function renderChart() {
+      const ctx = document.getElementById('chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Active Sessions',
+            data: [12, 19, 14, 6, 9, 21, 15],
+            backgroundColor: 'rgba(0,255,198,0.2)',
+            borderColor: '#00ffc6',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPlayers();
+      renderLeaderboard();
+      renderChart();
+    });
+  </script>
+</body>
+</html>
 
